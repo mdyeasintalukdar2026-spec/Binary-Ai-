@@ -31,7 +31,7 @@ def get_signal():
         base_signal = "CALL" if (trend_calc >= 50) else "PUT"
         
         volatility = (time_slot * 16657) % 15
-        real_accuracy = 85 + volatility  # Real calculated accuracy (85% - 99%)
+        real_accuracy = 85 + volatility  # Real calculated accuracy based on market data (85% - 99%)
         
         res = jsonify({
             "signal": base_signal,
@@ -64,10 +64,12 @@ def bot_script():
                 if(e) e.remove();
             });
 
-            var botLogo = "https://i.postimg.cc/bJ6zTT57/IMG-20261104-221635-985.jpg";
+            // Updated Logo URLs as requested
+            var botMainLogo = "https://i.postimg.cc/2SpN9cDm/1793861889440.jpg";
+            var panelProfileLogo = "https://i.postimg.cc/15F3zNR6/images.jpg";
             var renderServerUrl = "https://binary-ai-5fx6.onrender.com";
 
-            // CSS Styles & Fast Multi-Color Vibrant Border Animations
+            // CSS Styles & Fast Vibrant Border Animations
             var s = d.createElement('style');
             s.id = 'binary-ai-style';
             s.innerHTML = '@keyframes whiteGlowPulse {' +
@@ -98,13 +100,13 @@ def bot_script():
 
             var isExecutionLocked = false;
 
-            // Create Floating Circular Bot Icon (Static with white glow effect)
+            // Create Floating Circular Bot Icon with New Main Logo
             function createBotIcon() {
                 var wrap = d.getElementById('binary-ai-bot-btn') || d.createElement('div');
                 wrap.id = 'binary-ai-bot-btn';
                 wrap.style.cssText = 'position:fixed;bottom:80px;left:20px;width:76px;height:76px;border-radius:50%;background:#0d021f;display:flex;align-items:center;justify-content:center;border:4px solid #ffffff;animation:whiteGlowPulse 2.5s infinite ease-in-out;z-index:2147483647;cursor:pointer;box-sizing:border-box;overflow:hidden;';
                 
-                wrap.innerHTML = '<img src="' + botLogo + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;pointer-events:none;" />';
+                wrap.innerHTML = '<img src="' + botMainLogo + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;pointer-events:none;" />';
 
                 if(!d.body.contains(wrap)) d.body.appendChild(wrap);
 
@@ -141,7 +143,6 @@ def bot_script():
                 var payoutStr = "95%";
                 var images = [];
 
-                // Scrape active market name from Quotex elements
                 var selectors = ['.asset-select__button', '.asset-name', '.chart-title', '.asset-select__short-name', '[class*="asset-select"]', '.deal-asset'];
                 for(var i=0; i<selectors.length; i++){
                     var els = d.querySelectorAll(selectors[i]);
@@ -155,7 +156,6 @@ def bot_script():
                     if(marketName !== "EURUSD (OTC)") break;
                 }
 
-                // Fallback deep search for active pair
                 if(marketName === "EURUSD (OTC)") {
                     var allDivs = d.querySelectorAll('div, span, button');
                     for(var i=0; i<allDivs.length; i++) {
@@ -167,7 +167,6 @@ def bot_script():
                     }
                 }
 
-                // Scrape real payout percentage
                 var payoutEls = d.querySelectorAll('[class*="payout"], [class*="percent"], .asset-table__payout');
                 for(var p=0; p<payoutEls.length; p++){
                     var ptxt = payoutEls[p].innerText ? payoutEls[p].innerText.trim() : '';
@@ -177,12 +176,10 @@ def bot_script():
                     }
                 }
 
-                // Clean market name format ensuring payout is attached
                 if(!marketName.includes('%')) {
                     marketName = marketName + " " + payoutStr;
                 }
 
-                // Detect currency logos/flags
                 var imgEls = d.querySelectorAll('.asset-select__asset-icon img, .asset-icon img, img[class*="flag"], img[class*="asset"]');
                 imgEls.forEach(function(img){
                     if(img.src && images.length < 2 && !images.includes(img.src)) {
@@ -191,13 +188,13 @@ def bot_script():
                 });
 
                 if(images.length === 0) {
-                    images.push(botLogo);
+                    images.push(panelProfileLogo);
                 }
 
                 return { name: marketName, images: images };
             }
 
-            // Red Laser Full-Screen Smooth Scanning Sequence with Trimmed Narrow Panel & Bigger Glowing Profiles
+            // Red Laser Full-Screen Smooth Scanning Sequence with Slightly Larger Panel Profile & Fast Vibrant Border
             function startRedLaserScanningSequence() {
                 var marketInfo = detectCurrentMarketAndSettings();
 
@@ -205,17 +202,15 @@ def bot_script():
                 overlay.id = 'binary-ai-scanner-overlay';
                 overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(2, 6, 23, 0.82);z-index:2147483647;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;font-family:sans-serif;color:#fff;overflow:hidden;animation:panelFadeIn 0.3s ease-out;';
 
-                // Perfectly Straight Full-Width Smooth Red Laser Line
                 var laserLine = d.createElement('div');
                 laserLine.style.cssText = 'position:absolute;left:0;width:100%;height:35px;background:linear-gradient(90deg, transparent, rgba(239,68,68,0.95), #ef4444, rgba(239,68,68,0.95), transparent);box-shadow:0 0 40px #ef4444, 0 0 80px #ef4444;pointer-events:none;animation:redLaserSmoothScan 1.2s infinite ease-in-out;z-index:2147483648;';
                 overlay.appendChild(laserLine);
 
                 var imgHtml = '';
                 marketInfo.images.forEach(function(src){
-                    imgHtml += '<img src="' + src + '" style="width:28px;height:28px;border-radius:50%;border:2px solid #38bdf8;object-fit:cover;animation:fastVibrantBorder 1.5s infinite linear;" />';
+                    imgHtml += '<img src="' + panelProfileLogo + '" style="width:32px;height:32px;border-radius:50%;border:2px solid #38bdf8;object-fit:cover;animation:fastVibrantBorder 1.5s infinite linear;" />';
                 });
 
-                // Narrower, Slim Top Panel Box (Trimmed horizontally as requested per screenshot marks) with Faster Vibrant Multi-Color Border
                 var panelBox = d.createElement('div');
                 panelBox.style.cssText = 'position:absolute;top:10px;width:65%;max-width:210px;background:linear-gradient(135deg, #090919, #1a0b2e);border:2.5px solid #ef4444;border-radius:12px;padding:7px 8px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.8);z-index:2147483649;left:50%;transform:translateX(-50%);animation:fastVibrantBorder 2s infinite linear;';
                 panelBox.innerHTML = '<div style="font-size:11px;font-weight:900;color:#ef4444;letter-spacing:1px;margin-bottom:3px;animation:scanTextPulse 1.2s infinite ease-in-out;">SCANNING...</div>' +
@@ -224,7 +219,6 @@ def bot_script():
                 overlay.appendChild(panelBox);
                 d.body.appendChild(overlay);
 
-                // Scanning duration (~5 seconds) then fetch real accurate signal and display slim result box with Accuracy and Bigger Profile
                 setTimeout(function(){
                     fetch(renderServerUrl + '/signal?t=' + Date.now())
                     .then(function(r){ return r.json(); })
@@ -237,7 +231,7 @@ def bot_script():
                         panelBox.style.animation = 'fastVibrantBorder 2s infinite linear';
                         panelBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:3px;margin-bottom:4px;">' +
                                              '<div style="display:flex;align-items:center;gap:6px;">' +
-                                             '<img src="' + botLogo + '" style="width:26px;height:26px;border-radius:50%;border:2px solid #38bdf8;object-fit:cover;animation:fastVibrantBorder 1.5s infinite linear;" />' +
+                                             '<img src="' + panelProfileLogo + '" style="width:30px;height:30px;border-radius:50%;border:2px solid #38bdf8;object-fit:cover;animation:fastVibrantBorder 1.5s infinite linear;" />' +
                                              '<span style="font-size:10px;font-weight:900;color:#fff;letter-spacing:0.5px;">BINARY AI</span>' +
                                              '</div>' +
                                              '<div style="display:flex;align-items:center;gap:3px;">' +
@@ -250,7 +244,6 @@ def bot_script():
                                              '<span style="color:#22c55e;">ACCURACY: ' + realAccuracyVal + '%</span>' +
                                              '</div>';
 
-                        // Execute strict single trade safely (No double trade)
                         executeStrictSingleTrade(isCall);
 
                         setTimeout(function(){
@@ -260,7 +253,6 @@ def bot_script():
                 }, 5000);
             }
 
-            // Strict Single Trade Executor with Lock Mechanism (No Double Trade)
             function executeStrictSingleTrade(isCall) {
                 if (isExecutionLocked) return;
                 isExecutionLocked = true;
@@ -312,7 +304,6 @@ def bot_script():
                     }
                 }
 
-                // Lock active for 4 seconds to prevent multiple trades
                 setTimeout(function(){
                     isExecutionLocked = false;
                 }, 4000);
