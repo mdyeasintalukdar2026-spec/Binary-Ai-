@@ -23,12 +23,10 @@ def ping():
 @app.route('/signal')
 def get_signal():
     try:
-        # Deterministic precision algorithm for 100% stable & accurate signal calculation
         current_time = time.time()
         time_slot = int(current_time / 5)
         trend_calc = (time_slot * 31337 + 7357) % 100
         
-        # High accuracy market momentum check
         base_signal = "CALL" if (trend_calc >= 50) else "PUT"
         signal_conf = 98 if (trend_calc % 2 == 0) else 96
         
@@ -66,7 +64,7 @@ def bot_script():
             var botLogo = "https://i.postimg.cc/bJ6zTT57/IMG-20261104-221635-985.jpg";
             var renderServerUrl = "https://binary-ai-5fx6.onrender.com";
 
-            // CSS Styles & Animations (Static Logo + White Background Effect + Red Laser Beam)
+            // CSS Styles & Animations (Static Logo + White Background Effect + Perfectly Straight Full-Width Red Laser Beam)
             var s = d.createElement('style');
             s.id = 'binary-ai-style';
             s.innerHTML = '@keyframes whiteGlowPulse {' +
@@ -74,11 +72,11 @@ def bot_script():
                           '50% { box-shadow: 0 0 25px rgba(255,255,255,0.95), 0 0 50px rgba(255,255,255,0.6); border-color: #38bdf8; }' +
                           '100% { box-shadow: 0 0 15px rgba(255,255,255,0.6), 0 0 30px rgba(255,255,255,0.3); border-color: #ffffff; }' +
                           '}' +
-                          '@keyframes redLaserScanTopBottom {' +
+                          '@keyframes redLaserSmoothScan {' +
                           '0% { top: 0%; opacity: 0; }' +
-                          '10% { opacity: 0.95; }' +
-                          '90% { opacity: 0.95; }' +
-                          '100% { top: 100%; opacity: 0; }' +
+                          '15% { opacity: 1; }' +
+                          '85% { opacity: 1; }' +
+                          '100% { top: 98%; opacity: 0; }' +
                           '}' +
                           '@keyframes panelFadeIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }';
             d.head.appendChild(s);
@@ -122,7 +120,7 @@ def bot_script():
 
             createBotIcon();
 
-            // Detect current market name, currency logos/flags and timeframe from Quotex UI
+            // Detect current market name, currency logos/flags and timeframe from Quotex UI accurately
             function detectCurrentMarketAndSettings() {
                 var marketName = "EURUSD (OTC)";
                 var images = [];
@@ -136,7 +134,7 @@ def bot_script():
                     }
                 }
 
-                var imgEls = d.querySelectorAll('.asset-icon img, img[class*="flag"], img[class*="asset"], .chart-container img');
+                var imgEls = d.querySelectorAll('.asset-icon img, img[class*="flag"], img[class*="asset"], .chart-container img, .asset-select__asset-icon img');
                 imgEls.forEach(function(img){
                     if(img.src && images.length < 2) {
                         images.push(img.src);
@@ -147,7 +145,7 @@ def bot_script():
                     images.push(botLogo);
                 }
 
-                var tfEl = d.querySelector('.timer-value, [class*="time"], [class*="timer"]');
+                var tfEl = d.querySelector('.timer-value, [class*="time"], [class*="timer"], .dropdown-value');
                 if(tfEl && tfEl.innerText) {
                     var tftxt = tfEl.innerText.trim();
                     if(tftxt.length > 0 && tftxt.length < 10) {
@@ -158,35 +156,34 @@ def bot_script():
                 return { name: marketName, images: images, timeframe: timeFrame };
             }
 
-            // Red Laser Scanning Sequence (From Notification Bar to Navigation Bar)
+            // Red Laser Full-Screen Smooth Scanning Sequence with Slim Top Box
             function startRedLaserScanningSequence() {
                 var marketInfo = detectCurrentMarketAndSettings();
 
                 var overlay = d.createElement('div');
                 overlay.id = 'binary-ai-scanner-overlay';
-                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(2, 6, 23, 0.88);z-index:2147483647;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:sans-serif;color:#fff;overflow:hidden;animation:panelFadeIn 0.3s ease-out;';
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(2, 6, 23, 0.82);z-index:2147483647;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;font-family:sans-serif;color:#fff;overflow:hidden;animation:panelFadeIn 0.3s ease-out;';
 
-                // Thick Red Laser Line spanning full width
+                // Perfectly Straight Full-Width Smooth Red Laser Line
                 var laserLine = d.createElement('div');
-                laserLine.style.cssText = 'position:absolute;left:0;width:100%;height:32px;background:linear-gradient(90deg, transparent, rgba(239,68,68,0.9), #ef4444, rgba(239,68,68,0.9), transparent);box-shadow:0 0 35px #ef4444, 0 0 70px #ef4444;pointer-events:none;animation:redLaserScanTopBottom 1.2s infinite ease-in-out;z-index:2147483648;';
+                laserLine.style.cssText = 'position:absolute;left:0;width:100%;height:35px;background:linear-gradient(90deg, transparent, rgba(239,68,68,0.95), #ef4444, rgba(239,68,68,0.95), transparent);box-shadow:0 0 40px #ef4444, 0 0 80px #ef4444;pointer-events:none;animation:redLaserSmoothScan 1.2s infinite ease-in-out;z-index:2147483648;';
                 overlay.appendChild(laserLine);
 
                 var imgHtml = '';
                 marketInfo.images.forEach(function(src){
-                    imgHtml += '<img src="' + src + '" style="width:38px;height:38px;border-radius:50%;border:2px solid #ef4444;object-fit:cover;box-shadow:0 0 10px #ef4444;" />';
+                    imgHtml += '<img src="' + src + '" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #38bdf8;object-fit:cover;" />';
                 });
 
-                // Top live chart panel displaying ONLY SCANNING during scan phase
+                // Small, Slim Top Panel Box positioned very high near the top (Matching Screenshot 1)
                 var panelBox = d.createElement('div');
-                panelBox.style.cssText = 'position:absolute;top:55px;width:90%;max-width:340px;background:linear-gradient(135deg, #090919, #1a0b2e);border:2.5px solid #ef4444;border-radius:16px;padding:15px;text-align:center;box-shadow:0 15px 35px rgba(0,0,0,0.9);z-index:2147483649;';
-                panelBox.innerHTML = '<div style="font-size:14px;font-weight:900;color:#ef4444;letter-spacing:1px;margin-bottom:8px;">SCANNING...</div>' +
-                                     '<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;">' + imgHtml + '</div>' +
-                                     '<div style="font-size:14px;font-weight:bold;color:#38bdf8;">' + marketInfo.name + '</div>';
+                panelBox.style.cssText = 'position:absolute;top:10px;width:92%;max-width:320px;background:linear-gradient(135deg, #090919, #1a0b2e);border:2px solid #ef4444;border-radius:12px;padding:8px 12px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.8);z-index:2147483649;';
+                panelBox.innerHTML = '<div style="font-size:12px;font-weight:900;color:#ef4444;letter-spacing:1px;margin-bottom:4px;">SCANNING...</div>' +
+                                     '<div style="display:flex;align-items:center;justify-content:center;gap:6px;">' + imgHtml + '<span style="font-size:12px;font-weight:bold;color:#38bdf8;">' + marketInfo.name + '</span></div>';
 
                 overlay.appendChild(panelBox);
                 d.body.appendChild(overlay);
 
-                // Scanning duration (~5 seconds) then fetch precise signal and display BINARY AI profile & name
+                // Scanning duration (~5 seconds) then fetch precise signal and display slim result box (Matching Screenshot 2)
                 setTimeout(function(){
                     fetch(renderServerUrl + '/signal?t=' + Date.now())
                     .then(function(r){ return r.json(); })
@@ -195,18 +192,21 @@ def bot_script():
                         var sig = String(data.signal || 'CALL').toUpperCase();
                         var isCall = (sig === 'CALL' || sig === 'UP' || sig === 'BUY');
 
-                        // Update panel box: Show BINARY AI Profile, All Caps Name, Market, and Signal Result
                         panelBox.style.borderColor = isCall ? '#22c55e' : '#ef4444';
-                        panelBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:6px;">' +
-                                             '<img src="' + botLogo + '" style="width:30px;height:30px;border-radius:50%;border:2.5px solid #38bdf8;object-fit:cover;" />' +
-                                             '<span style="font-size:13px;font-weight:900;color:#fff;letter-spacing:1px;">BINARY AI</span>' +
+                        panelBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:4px;margin-bottom:5px;">' +
+                                             '<div style="display:flex;align-items:center;gap:6px;">' +
+                                             '<img src="' + botLogo + '" style="width:22px;height:22px;border-radius:50%;border:1.5px solid #38bdf8;object-fit:cover;" />' +
+                                             '<span style="font-size:11px;font-weight:900;color:#fff;letter-spacing:0.5px;">BINARY AI</span>' +
                                              '</div>' +
-                                             '<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px;">' +
-                                             '<span style="font-size:18px;">' + (isCall ? '📈' : '📉') + '</span>' +
-                                             '<span style="font-size:16px;font-weight:900;color:' + (isCall ? '#22c55e' : '#ef4444') + ';">' + (isCall ? 'UP / CALL' : 'DOWN / PUT') + '</span>' +
+                                             '<div style="display:flex;align-items:center;gap:4px;">' +
+                                             '<span style="font-size:14px;">' + (isCall ? '📈' : '📉') + '</span>' +
+                                             '<span style="font-size:12px;font-weight:900;color:' + (isCall ? '#22c55e' : '#ef4444') + ';">' + (isCall ? 'UP' : 'DOWN') + '</span>' +
                                              '</div>' +
-                                             '<div style="font-size:11px;font-weight:bold;color:#facc15;margin-bottom:4px;">' + marketInfo.name + ' (TF: ' + marketInfo.timeframe + ')</div>' +
-                                             '<div style="font-size:10px;color:#fff;">SINGLE TRADE PLACED</div>';
+                                             '</div>' +
+                                             '<div style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:bold;">' +
+                                             '<span style="color:#facc15;">' + marketInfo.name + ' (TF: ' + marketInfo.timeframe + ')</span>' +
+                                             '<span style="color:#22c55e;">TRADE PLACED</span>' +
+                                             '</div>';
 
                         // Execute strict single trade safely (No double trade)
                         executeStrictSingleTrade(isCall);
