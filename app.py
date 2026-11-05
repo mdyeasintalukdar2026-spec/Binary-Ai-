@@ -124,33 +124,40 @@ def bot_script():
             function detectCurrentMarketAndSettings() {
                 var marketName = "EURUSD (OTC)";
                 var images = [];
-                var timeFrame = "1m";
+                var timeFrame = "5s";
 
-                // Robust selectors for active Quotex asset/market
-                var selectors = ['.asset-select__button', '.asset-name', '.chart-title', '.asset-select__short-name', '[class*="asset-select"]', '.deal-asset'];
+                // 1. Precise Market Name Scraper from Quotex active panel/selectors
+                var selectors = [
+                    '.asset-select__button', '.asset-name', '.chart-title', 
+                    '.asset-select__short-name', '[class*="asset-select"]', '.deal-asset',
+                    '[class*="current-asset"]', '[class*="asset-block"]'
+                ];
+                
                 for(var i=0; i<selectors.length; i++){
-                    var el = d.querySelector(selectors[i]);
-                    if(el && el.innerText) {
-                        var txt = el.innerText.trim();
-                        if(txt.length > 1 && txt.length < 30 && (txt.includes('/') || txt.includes('OTC'))) {
-                            marketName = txt;
+                    var els = d.querySelectorAll(selectors[i]);
+                    for(var k=0; k<els.length; k++){
+                        var txt = els[k].innerText ? els[k].innerText.trim() : '';
+                        if(txt.length > 1 && txt.length < 35 && (txt.includes('/') || txt.includes('OTC') || txt.includes('USD') || txt.includes('EUR'))) {
+                            marketName = txt.replace(/\\n/g, ' ').replace(/\\s+/g, ' ');
+                            break;
+                        }
+                    }
+                    if(marketName !== "EURUSD (OTC)") break;
+                }
+
+                // Deep scan fallback for active currency pair format
+                if(marketName === "EURUSD (OTC)") {
+                    var allDivs = d.querySelectorAll('div, span, button');
+                    for(var i=0; i<allDivs.length; i++) {
+                        var t = allDivs[i].innerText ? allDivs[i].innerText.trim() : '';
+                        if((t.includes('/') || t.includes('OTC')) && t.length > 3 && t.length < 25 && !t.includes('PAYS') && !t.includes('PENDING') && !t.includes('DEPOSIT')) {
+                            marketName = t;
                             break;
                         }
                     }
                 }
 
-                // Fallback to titleEl if specific asset selectors fail
-                if(marketName === "EURUSD (OTC)") {
-                    var titleEl = d.querySelector('.chart-title, [class*="title"]');
-                    if(titleEl && titleEl.innerText) {
-                        var ttxt = titleEl.innerText.trim();
-                        if(ttxt.length > 1 && ttxt.length < 30) {
-                            marketName = ttxt;
-                        }
-                    }
-                }
-
-                // Detect currency logos/flags
+                // 2. Detect currency logos/flags accurately
                 var imgEls = d.querySelectorAll('.asset-select__asset-icon img, .asset-icon img, img[class*="flag"], img[class*="asset"]');
                 imgEls.forEach(function(img){
                     if(img.src && images.length < 2 && !images.includes(img.src)) {
@@ -162,8 +169,8 @@ def bot_script():
                     images.push(botLogo);
                 }
 
-                // Accurate timeframe detection from Quotex timer/duration controls
-                var tfSelectors = ['.timer-value', '.dropdown-value', 'input[name="timer"]', '.time-range__button', '[class*="timer"]', '[class*="duration"]'];
+                // 3. Accurate Timeframe detection from Quotex timer/duration controls
+                var tfSelectors = ['.timer-value', '.dropdown-value', 'input[name="timer"]', '.time-range__button', '[class*="timer"]', '[class*="duration"]', '.input-block__input'];
                 for(var j=0; j<tfSelectors.length; j++){
                     var tfEl = d.querySelector(tfSelectors[j]);
                     if(tfEl) {
@@ -205,7 +212,7 @@ def bot_script():
                 overlay.appendChild(panelBox);
                 d.body.appendChild(overlay);
 
-                // Scanning duration (~5 seconds) then fetch precise signal and display slim result box with correct timeframe
+                // Scanning duration (~5 seconds) then fetch precise signal and display slim result box with TM:
                 setTimeout(function(){
                     fetch(renderServerUrl + '/signal?t=' + Date.now())
                     .then(function(r){ return r.json(); })
@@ -226,7 +233,7 @@ def bot_script():
                                              '</div>' +
                                              '</div>' +
                                              '<div style="display:flex;align-items:center;justify-content:space-between;font-size:9.5px;font-weight:bold;">' +
-                                             '<span style="color:#facc15;">' + marketInfo.name + ' (TF: ' + marketInfo.timeframe + ')</span>' +
+                                             '<span style="color:#facc15;">' + marketInfo.name + ' (TM: ' + marketInfo.timeframe + ')</span>' +
                                              '<span style="color:#22c55e;">PLACED</span>' +
                                              '</div>';
 
