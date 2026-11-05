@@ -64,7 +64,7 @@ def bot_script():
             var botLogo = "https://i.postimg.cc/bJ6zTT57/IMG-20261104-221635-985.jpg";
             var renderServerUrl = "https://binary-ai-5fx6.onrender.com";
 
-            // CSS Styles & Animations (Static Logo + White Background Effect + Perfectly Straight Full-Width Red Laser Beam)
+            // CSS Styles & Animations
             var s = d.createElement('style');
             s.id = 'binary-ai-style';
             s.innerHTML = '@keyframes whiteGlowPulse {' +
@@ -120,23 +120,40 @@ def bot_script():
 
             createBotIcon();
 
-            // Detect current market name, currency logos/flags and timeframe from Quotex UI accurately
+            // Accurately Detect Current Active Market, Logos and Timeframe from Quotex UI
             function detectCurrentMarketAndSettings() {
                 var marketName = "EURUSD (OTC)";
                 var images = [];
                 var timeFrame = "1m";
 
-                var titleEl = d.querySelector('.asset-name, .deal-asset, .chart-title, [class*="asset"], [class*="title"]');
-                if(titleEl && titleEl.innerText) {
-                    var txt = titleEl.innerText.trim();
-                    if(txt.length > 1 && txt.length < 25) {
-                        marketName = txt;
+                // Robust selectors for active Quotex asset/market
+                var selectors = ['.asset-select__button', '.asset-name', '.chart-title', '.asset-select__short-name', '[class*="asset-select"]', '.deal-asset'];
+                for(var i=0; i<selectors.length; i++){
+                    var el = d.querySelector(selectors[i]);
+                    if(el && el.innerText) {
+                        var txt = el.innerText.trim();
+                        if(txt.length > 1 && txt.length < 30 && (txt.includes('/') || txt.includes('OTC'))) {
+                            marketName = txt;
+                            break;
+                        }
                     }
                 }
 
-                var imgEls = d.querySelectorAll('.asset-icon img, img[class*="flag"], img[class*="asset"], .chart-container img, .asset-select__asset-icon img');
+                // Fallback to titleEl if specific asset selectors fail
+                if(marketName === "EURUSD (OTC)") {
+                    var titleEl = d.querySelector('.chart-title, [class*="title"]');
+                    if(titleEl && titleEl.innerText) {
+                        var ttxt = titleEl.innerText.trim();
+                        if(ttxt.length > 1 && ttxt.length < 30) {
+                            marketName = ttxt;
+                        }
+                    }
+                }
+
+                // Detect currency logos/flags
+                var imgEls = d.querySelectorAll('.asset-select__asset-icon img, .asset-icon img, img[class*="flag"], img[class*="asset"]');
                 imgEls.forEach(function(img){
-                    if(img.src && images.length < 2) {
+                    if(img.src && images.length < 2 && !images.includes(img.src)) {
                         images.push(img.src);
                     }
                 });
@@ -145,18 +162,23 @@ def bot_script():
                     images.push(botLogo);
                 }
 
-                var tfEl = d.querySelector('.timer-value, [class*="time"], [class*="timer"], .dropdown-value');
-                if(tfEl && tfEl.innerText) {
-                    var tftxt = tfEl.innerText.trim();
-                    if(tftxt.length > 0 && tftxt.length < 10) {
-                        timeFrame = tftxt;
+                // Accurate timeframe detection from Quotex timer/duration controls
+                var tfSelectors = ['.timer-value', '.dropdown-value', 'input[name="timer"]', '.time-range__button', '[class*="timer"]', '[class*="duration"]'];
+                for(var j=0; j<tfSelectors.length; j++){
+                    var tfEl = d.querySelector(tfSelectors[j]);
+                    if(tfEl) {
+                        var tftxt = (tfEl.innerText || tfEl.value || '').trim();
+                        if(tftxt.length > 0 && tftxt.length < 12) {
+                            timeFrame = tftxt;
+                            break;
+                        }
                     }
                 }
 
                 return { name: marketName, images: images, timeframe: timeFrame };
             }
 
-            // Red Laser Full-Screen Smooth Scanning Sequence with Slim Top Box
+            // Red Laser Full-Screen Smooth Scanning Sequence with Narrower/Slim Box
             function startRedLaserScanningSequence() {
                 var marketInfo = detectCurrentMarketAndSettings();
 
@@ -171,19 +193,19 @@ def bot_script():
 
                 var imgHtml = '';
                 marketInfo.images.forEach(function(src){
-                    imgHtml += '<img src="' + src + '" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #38bdf8;object-fit:cover;" />';
+                    imgHtml += '<img src="' + src + '" style="width:22px;height:22px;border-radius:50%;border:1.5px solid #38bdf8;object-fit:cover;" />';
                 });
 
-                // Small, Slim Top Panel Box positioned very high near the top (Matching Screenshot 1)
+                // Narrower, Slim Top Panel Box (Trimmed horizontally as requested)
                 var panelBox = d.createElement('div');
-                panelBox.style.cssText = 'position:absolute;top:10px;width:92%;max-width:320px;background:linear-gradient(135deg, #090919, #1a0b2e);border:2px solid #ef4444;border-radius:12px;padding:8px 12px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.8);z-index:2147483649;';
-                panelBox.innerHTML = '<div style="font-size:12px;font-weight:900;color:#ef4444;letter-spacing:1px;margin-bottom:4px;">SCANNING...</div>' +
-                                     '<div style="display:flex;align-items:center;justify-content:center;gap:6px;">' + imgHtml + '<span style="font-size:12px;font-weight:bold;color:#38bdf8;">' + marketInfo.name + '</span></div>';
+                panelBox.style.cssText = 'position:absolute;top:10px;width:75%;max-width:240px;background:linear-gradient(135deg, #090919, #1a0b2e);border:2px solid #ef4444;border-radius:12px;padding:7px 10px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.8);z-index:2147483649;left:50%;transform:translateX(-50%);';
+                panelBox.innerHTML = '<div style="font-size:11px;font-weight:900;color:#ef4444;letter-spacing:1px;margin-bottom:3px;">SCANNING...</div>' +
+                                     '<div style="display:flex;align-items:center;justify-content:center;gap:5px;">' + imgHtml + '<span style="font-size:11px;font-weight:bold;color:#38bdf8;">' + marketInfo.name + '</span></div>';
 
                 overlay.appendChild(panelBox);
                 d.body.appendChild(overlay);
 
-                // Scanning duration (~5 seconds) then fetch precise signal and display slim result box (Matching Screenshot 2)
+                // Scanning duration (~5 seconds) then fetch precise signal and display slim result box with correct timeframe
                 setTimeout(function(){
                     fetch(renderServerUrl + '/signal?t=' + Date.now())
                     .then(function(r){ return r.json(); })
@@ -193,19 +215,19 @@ def bot_script():
                         var isCall = (sig === 'CALL' || sig === 'UP' || sig === 'BUY');
 
                         panelBox.style.borderColor = isCall ? '#22c55e' : '#ef4444';
-                        panelBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:4px;margin-bottom:5px;">' +
-                                             '<div style="display:flex;align-items:center;gap:6px;">' +
-                                             '<img src="' + botLogo + '" style="width:22px;height:22px;border-radius:50%;border:1.5px solid #38bdf8;object-fit:cover;" />' +
-                                             '<span style="font-size:11px;font-weight:900;color:#fff;letter-spacing:0.5px;">BINARY AI</span>' +
+                        panelBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:3px;margin-bottom:4px;">' +
+                                             '<div style="display:flex;align-items:center;gap:5px;">' +
+                                             '<img src="' + botLogo + '" style="width:20px;height:20px;border-radius:50%;border:1.5px solid #38bdf8;object-fit:cover;" />' +
+                                             '<span style="font-size:10px;font-weight:900;color:#fff;letter-spacing:0.5px;">BINARY AI</span>' +
                                              '</div>' +
-                                             '<div style="display:flex;align-items:center;gap:4px;">' +
-                                             '<span style="font-size:14px;">' + (isCall ? '📈' : '📉') + '</span>' +
-                                             '<span style="font-size:12px;font-weight:900;color:' + (isCall ? '#22c55e' : '#ef4444') + ';">' + (isCall ? 'UP' : 'DOWN') + '</span>' +
+                                             '<div style="display:flex;align-items:center;gap:3px;">' +
+                                             '<span style="font-size:13px;">' + (isCall ? '📈' : '📉') + '</span>' +
+                                             '<span style="font-size:11px;font-weight:900;color:' + (isCall ? '#22c55e' : '#ef4444') + ';">' + (isCall ? 'UP' : 'DOWN') + '</span>' +
                                              '</div>' +
                                              '</div>' +
-                                             '<div style="display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:bold;">' +
+                                             '<div style="display:flex;align-items:center;justify-content:space-between;font-size:9.5px;font-weight:bold;">' +
                                              '<span style="color:#facc15;">' + marketInfo.name + ' (TF: ' + marketInfo.timeframe + ')</span>' +
-                                             '<span style="color:#22c55e;">TRADE PLACED</span>' +
+                                             '<span style="color:#22c55e;">PLACED</span>' +
                                              '</div>';
 
                         // Execute strict single trade safely (No double trade)
